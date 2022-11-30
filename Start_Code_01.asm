@@ -32,14 +32,8 @@ CoCo_START:
 ***********************************************************
         PSHS    CC,D,DP,X,Y,U       * Backup everything
         ORCC    #$50                * Disable interrupts
-; 			CLRA
-;				STA			$FF40										* Turn off drive motor
-;        STA     High_Speed_Mode       	* High Speed mode enabled
 
 * CoCo Prep
-        SETDP   CoCo_START/256      * Set the direct Page for the assembler
-        LDA     #CoCo_START/256
-        TFR     A,DP
         LDX     #MountFile          * Memory location of Filename, terminated with a zero
         JSR     OpenSDC_File_X_At_Start   * Open a file on the SDC for streaming, 512 bytes at a time
         BCS     FileOpenError       * If Carry is set then an error occured openning the file go handle it
