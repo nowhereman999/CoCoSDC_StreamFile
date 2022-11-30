@@ -52,8 +52,8 @@ PollSDC:
                                     * Bit 1 set = SDC Buffer has been loaded, Bit 1 clear = SDC Buffer is still being loaded
                                     * Bit 0 set = Not at End of File yet,     Bit 0 clear = Reached the End of the File
         ASRB                        * BUSY --> carry
-        BCC     StreamDone          * exit if BUSY cleared
-        BEQ     PollSDC             * continue polling if not READY
+        BCC     StreamDone          * exit if BUSY cleared (we reached the End of the File)
+        BEQ     PollSDC             * continue polling if the Buffer is not completely loaded
 
         DECA                        * Decrement the sector counter
         BNE     LoopAgain           * keep reading if we haven't counted down to zero
