@@ -1,9 +1,5 @@
 SpeedTest  			EQU  1  * 1 = show the border while drawing dots on screen then turn off when done, shows CPU usage
 
-* Include CoCo 3 standard hardware pointers
-        INCLUDE ./includes/CoCo3_Start.asm
-;        INCLUDE ./includes/CommSDC.asm          * low level code to send and receive command blocks to the SDC
-
 ************************************************************************
 * Filename format info:
 * This can include a full path name to the file
@@ -15,14 +11,19 @@ SpeedTest  			EQU  1  * 1 = show the border while drawing dots on screen then tu
 * Name on the SD card is "CHECK123.BIN" needs to be accessed with the name 'CHECK123BIN'
 * Name on the SD card is "HELLO.TXT" in a subfolder called "NEW" needs to be accessed with 'NEW/HELLO   TXT'
 *
-* Filename must be terminated with a zero.  The FCN command adds the zero when assembling
+* Filename must be terminated with a zero.  The FCN opcode adds the zero when assembling
 ************************************************************************
-* From talking with Ed snider, the files on the SD card don't have to be Disk images they can be any file type but they
-* do have to be padded to 512 byte boundary and they need to be 80K or larger
+* Filesize limitations:
+* Files must be padded so they are in a 512 byte boundary or the routine will be stuck in a loop
+* In other words the filesize in HEX must be end with $000,$200,$400,$600,$800,$A00,$C00,$E00
+* The smallest size a file can be is 79,360 bytes, in hex that is $13600
+* I haven't tested the max filesize but since the CoCoSDC uses 512 bytes sectors and a 24 bit system to keep track of the sectors
+* I would guess the max filesize would be 512x256x256x256 = 1,879,048,192 bytes = 1,835,008 kilobytes = 1,835.008 Megabytes = 1.835008 Gigbytes
+********************************************************************
 
-				ORG     $0E00
+	ORG     $0E00
 
-        INCLUDE ./includes/SDC_Stream_File_Library.asm        * Include SDC Library for openning, streaming & closing big files on the SDC
+        INCLUDE ./includes/SDC_Stream_File_Library.asm        * Include SDC Library for openning for streaming & closing big files on the SDC
 ************************************************************************
 MountFile:
         FCN     'HEY12345JNK'       * Filename on SD card to open, FCN puts a zero on the end of the string
@@ -63,7 +64,7 @@ StreamDone:
         JSR     Close_SD_File       * Put Controller back into Emulation Mode
         PULS    CC,D,DP,X,Y,U,PC    * restore and return
 
-* Get here if an error occurred openning a file
+* Get here if an error occurred openning a file, probably a filename error.
 FileOpenError:
         JSR     Close_SD_File       * Put Controller back into Emulation Mode
         LDD     #$FFFF              * Otherwiese hand an error
