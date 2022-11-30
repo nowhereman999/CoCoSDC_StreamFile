@@ -1,5 +1,3 @@
-SpeedTest  			EQU  1  * 1 = show the border while drawing dots on screen then turn off when done, shows CPU usage
-
 ************************************************************************
 * Filename format info:
 * This can include a full path name to the file
