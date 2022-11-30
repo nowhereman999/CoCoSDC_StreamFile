@@ -59,7 +59,7 @@ PollSDC:
         BNE     LoopAgain           * keep reading if we haven't counted down to zero
 
 StreamDone:
-        JSR     Close_SD_File       * Put Controller back into Emulation Mode
+        JSR     Close_SD_File       * Close file and put the SDC back into Emulation Mode
         PULS    CC,D,DP,X,Y,U,PC    * restore and return
 
 * Get here if an error occurred openning a file, probably a filename error.
